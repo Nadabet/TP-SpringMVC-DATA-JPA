@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formulaire Patient</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3c6382;
+            --primary-light: #f1f9ff;
+            --accent-color: #0a79df;
+            --form-bg: #ffffff;
+            --form-border: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-container {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+            background-color: var(--form-bg);
+        }
+
+        .form-header {
+            background-color: var(--primary-light);
+            padding: 24px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-body {
+            padding: 30px;
+        }
+
+        .form-footer {
+            padding: 20px 30px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(60, 99, 130, 0.25);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #325472;
+            border-color: #325472;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+        }
+
+        .required-asterisk {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        .switch-field {
+            display: flex;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+
+        .switch-field input {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+
+        .switch-field label {
+            background-color: #fff;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            text-align: center;
+            padding: 8px 16px;
+            margin-bottom: 0;
+            transition: all 0.1s ease-in-out;
+            flex: 1;
+        }
+
+        .switch-field label:hover {
+            cursor: pointer;
+        }
+
+        .switch-field input:checked + label {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: none;
+        }
+
+        .switch-field label:first-of-type {
+            border-radius: 6px 0 0 6px;
+            border-right: 1px solid #ced4da;
+        }
+
+        .switch-field label:last-of-type {
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* Ajout pour les styles d'erreur */
+        .is-invalid {
+            border-color: #dc3545;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container py-4">
+        <div class="form-container">
+            <div class="form-header">
+                <h3 class="form-title mb-0">
+                    <i class="fas fa-user-edit me-2"></i>
+                    <span th:text="${patient.id != null ? 'Modifier le patient' : 'Nouveau patient'}">Formulaire Patient</span>
+                </h3>
+                <small class="text-muted">Remplissez les informations du patient</small>
+            </div>
+
+            <form th:action="@{/admin/savePatient}" method="post" th:object="${patient}">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12 mb-3">
+                            <label for="nom" class="form-label">Nom complet<span class="required-asterisk">*</span></label>
+                            <input type="text" class="form-control" th:class="${#fields.hasErrors('nom')} ? 'form-control is-invalid' : 'form-control'" id="nom" th:field="*{nom}">
+                            <div class="error-message" th:errors="*{nom}">Veuillez entrer le nom du patient.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="dateNaissance" class="form-label">Date de naissance<span class="required-asterisk">*</span></label>
+                            <input type="date" class="form-control" th:class="${#fields.hasErrors('dateNaissance')} ? 'form-control is-invalid' : 'form-control'" id="dateNaissance" th:field="*{dateNaissance}">
+                            <div class="error-message" th:errors="*{dateNaissance}">Veuillez entrer une date de naissance valide.</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="score" class="form-label">Score de santé<span class="required-asterisk">*</span></label>
+                            <input type="number" class="form-control" th:class="${#fields.hasErrors('score')} ? 'form-control is-invalid' : 'form-control'" id="score" th:field="*{score}" min="0" max="100">
+                            <div class="form-text">De 0 (critique) à 100 (excellent)</div>
+                            <div class="error-message" th:errors="*{score}">Veuillez entrer un score entre 0 et 100.</div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label d-block">État de santé<span class="required-asterisk">*</span></label>
+                            <div class="switch-field" th:class="${#fields.hasErrors('malade')} ? 'switch-field is-invalid' : 'switch-field'">
+                                <input type="radio" id="sante-bonne" name="malade" th:field="*{malade}" value="false" checked />
+                                <label for="sante-bonne">En bonne santé</label>
+                                <input type="radio" id="sante-malade" name="malade" th:field="*{malade}" value="true" />
+                                <label for="sante-malade">Malade</label>
+                            </div>
+                            <div class="error-message" th:errors="*{malade}">Veuillez sélectionner un état de santé.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer d-flex justify-content-between">
+                    <a th:href="@{/index}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Retour
+                    </a>
+                    <div>
+                        <button type="reset" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-undo me-1"></i> Réinitialiser
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Enregistrer
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</div>
+</body>
+</html>
